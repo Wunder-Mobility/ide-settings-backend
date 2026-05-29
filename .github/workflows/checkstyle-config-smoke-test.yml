@@ -64,12 +64,11 @@ jobs:
       - name: Bad fixture MUST have an CustomImportOrder violation
         run: |
           set -uo pipefail
-          set +e
-          java -jar checkstyle.jar -c /tmp/config.xml .checkstyle-test/BadImports.java > bad.out 2>&1
-          status=$?
-          set -e
+          java -jar checkstyle.jar -c /tmp/config.xml .checkstyle-test/BadImports.java > bad.out 2>&1 || true
           echo '--- checkstyle output ---'; cat bad.out
-          if [ "$status" -eq 0 ] || ! grep -q 'CustomImportOrder' bad.out; then
+          # CustomImportOrder is configured at WARN severity, so Checkstyle exits 0 even when it
+          # reports the violation; assert on the presence of the violation token, not the exit code.
+          if ! grep -q 'CustomImportOrder' bad.out; then
             echo "FAIL: BadImports.java did NOT report an CustomImportOrder violation but should have."
             exit 1
           fi
