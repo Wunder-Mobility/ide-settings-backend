@@ -4,7 +4,7 @@ Add https://github.com/Wunder-Mobility/ide-settings-backend to the "Read-only So
 
 Then synchronize the settings by calling VCS -> Sync Settings -> Merge
 
-Make sure the correct CodeStyle config is avtive:
+Make sure the correct CodeStyle config is active:
 File -> Settings -> Editor -> CodeStyle
 It should say "goUrban_v2" after "Scheme:"
 

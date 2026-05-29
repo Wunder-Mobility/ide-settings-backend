@@ -22,11 +22,13 @@ on:
 jobs:
   smoke-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
         with:
           distribution: temurin
           java-version: '17'
@@ -60,9 +62,12 @@ jobs:
       - name: Bad fixture MUST have an CustomImportOrder violation
         run: |
           set -uo pipefail
-          java -jar checkstyle.jar -c /tmp/config.xml .checkstyle-test/BadImports.java > bad.out 2>&1 || true
+          set +e
+          java -jar checkstyle.jar -c /tmp/config.xml .checkstyle-test/BadImports.java > bad.out 2>&1
+          status=$?
+          set -e
           echo '--- checkstyle output ---'; cat bad.out
-          if ! grep -q '\[CustomImportOrder\]' bad.out; then
+          if [ "$status" -eq 0 ] || ! grep -q 'CustomImportOrder' bad.out; then
             echo "FAIL: BadImports.java did NOT report an CustomImportOrder violation but should have."
             exit 1
           fi
